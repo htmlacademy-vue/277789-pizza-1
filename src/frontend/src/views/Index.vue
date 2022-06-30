@@ -21,15 +21,12 @@
               <source
                 type="image/webp"
                 :srcset="
-                  addExtension(avatarUrlWithoutExtension, '.webp') +
-                  ' 1x,' +
-                  addExtension(avatarUrlWithoutExtension, '@2x.webp') +
-                  ' 2x'
+                  avatarWebpSmallImage + ' 1x,' + avatarWebpBigImage + ' 2x'
                 "
               />
               <img
-                :src="addExtension(avatarUrlWithoutExtension, '.jpg')"
-                :srcset="addExtension(avatarUrlWithoutExtension, '@2x.jpg')"
+                :src="this.user.avatar"
+                :srcset="avatarJpgBigImage"
                 :alt="user.name"
                 width="32"
                 height="32"
@@ -54,8 +51,8 @@
 
               <div class="sheet__content dough">
                 <label
-                  v-for="(dough, index) in formattedDoughes"
-                  :key="index"
+                  v-for="(dough, index) in doughes"
+                  :key="dough.id"
                   class="dough__input"
                   :class="`dough__input--${dough.type}`"
                 >
@@ -79,8 +76,8 @@
 
               <div class="sheet__content diameter">
                 <label
-                  v-for="(size, index) in formattedSizes"
-                  :key="index"
+                  v-for="(size, index) in sizes"
+                  :key="size.id"
                   class="diameter__input"
                   :class="`diameter__input--${size.type}`"
                 >
@@ -108,8 +105,8 @@
                   <p>Основной соус:</p>
 
                   <label
-                    v-for="(sauce, index) in formattedSauces"
-                    :key="index"
+                    v-for="(sauce, index) in sauces"
+                    :key="sauce.id"
                     class="radio ingredients__input"
                   >
                     <input
@@ -127,13 +124,15 @@
 
                   <ul class="ingredients__list">
                     <li
-                      v-for="(item, index) in formattedIngredients"
-                      :key="index"
+                      v-for="ingredient in ingredients"
+                      :key="ingredient.id"
                       class="ingredients__item"
                     >
-                      <span class="filling" :class="`filling--${item.type}`">{{
-                        item.name
-                      }}</span>
+                      <span
+                        class="filling"
+                        :class="`filling--${ingredient.type}`"
+                        >{{ ingredient.name }}</span
+                      >
 
                       <div class="counter counter--orange ingredients__counter">
                         <button
@@ -199,6 +198,12 @@ import misc from "@/static/misc.json";
 import pizza from "@/static/pizza.json";
 import user from "@/static/user.json";
 import { getUrlWithoutExtension, addItemType } from "@/common/helpers";
+import {
+  DOUGHES_MAP,
+  SIZES_MAP,
+  SAUCES_MAP,
+  INGERDIENTS_MAP,
+} from "@/common/constants";
 
 export default {
   name: "Index",
@@ -210,25 +215,28 @@ export default {
     };
   },
   computed: {
-    avatarUrlWithoutExtension() {
-      return getUrlWithoutExtension(this.user.avatar);
+    avatarJpgBigImage() {
+      return getUrlWithoutExtension(this.user.avatar) + "@2x.jpg";
     },
-    formattedDoughes() {
-      return this.pizza.dough.map(addItemType);
+    avatarWebpSmallImage() {
+      return getUrlWithoutExtension(this.user.avatar) + ".webp";
     },
-    formattedSizes() {
-      return this.pizza.sizes.map(addItemType);
+    avatarWebpBigImage() {
+      return getUrlWithoutExtension(this.user.avatar) + "@2x.webp";
     },
-    formattedSauces() {
-      return this.pizza.sauces.map(addItemType);
+    doughes() {
+      return this.pizza.dough.map((item) => addItemType(item, DOUGHES_MAP));
     },
-    formattedIngredients() {
-      return this.pizza.ingredients.map(addItemType);
+    sizes() {
+      return this.pizza.sizes.map((item) => addItemType(item, SIZES_MAP));
     },
-  },
-  methods: {
-    addExtension(url, extension) {
-      return url + extension;
+    sauces() {
+      return this.pizza.sauces.map((item) => addItemType(item, SAUCES_MAP));
+    },
+    ingredients() {
+      return this.pizza.ingredients.map((item) =>
+        addItemType(item, INGERDIENTS_MAP)
+      );
     },
   },
 };

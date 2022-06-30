@@ -1,5 +1,3 @@
-import { TYPES_MAP } from "@/common/constants";
-
 export const getUrlWithoutExtension = (url) => {
   if (!url) {
     return "";
@@ -8,7 +6,7 @@ export const getUrlWithoutExtension = (url) => {
   return url.indexOf(".") !== -1 ? url.slice(0, url.indexOf(".")) : url;
 };
 
-export const addItemType = (item) => ({
+export const addItemType = (item, map) => ({
   ...item,
-  type: TYPES_MAP[item.name],
+  type: map[item.id],
 });
